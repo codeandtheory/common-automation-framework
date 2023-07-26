@@ -1,8 +1,6 @@
 .idea
 reports/
 target/
-src/main/resources/android/apps/
-src/main/resources/ios/apps/
 *.class
 *.apk
 *.ipa
