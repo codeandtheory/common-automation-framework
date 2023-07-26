@@ -77,14 +77,17 @@ public class Platform {
     }
 
     public boolean isAndroid(){
-       return this.platformName.toLowerCase().startsWith("a");
+       return this.platformName.toLowerCase().startsWith("andr");
     }
 
     public boolean isIOS(){
-        return this.platformName.toLowerCase().startsWith("i");
+        return this.platformName.toLowerCase().startsWith("ios");
     }
 
     public boolean isWeb(){
-        return this.platformName.toLowerCase().startsWith("w");}
+        return this.platformName.toLowerCase().startsWith("web");}
+
+    public boolean isRestApis(){
+        return this.platformName.toLowerCase().startsWith("rest")||this.platformName.toLowerCase().startsWith("api");}
 
 }

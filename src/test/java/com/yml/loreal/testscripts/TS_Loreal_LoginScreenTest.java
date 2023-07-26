@@ -3,11 +3,16 @@ package com.yml.loreal.testscripts;
 import com.yml.loreal.common.CommonUtil;
 import com.yml.loreal.common.SalonCentricCommons;
 import com.yml.loreal.contracts.adapters.MobileDriverActionAdapter;
+import com.yml.loreal.rest.ApiEndPoints;
+import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.yml.loreal.common.AppUiObjectNames.*;
@@ -59,7 +64,17 @@ public class TS_Loreal_LoginScreenTest extends TS_Loreal_BaseTest {
         commonUtil.logExecutionEnd();
     }
 
+    @Test(description = "API Test")
+    public void tc001_list_users(){
+        commonUtil.logExecutionStart();
+        currentTestCase.info("test started");
+        String list_user_url=super.apiUrl+ ApiEndPoints.LIST_USERS;
+        Map<String, Object> params=new HashMap<>();
+        params.put("page",2);
+        Response response=requestUtil.getRequestWithHeadersAndParam(list_user_url,new HashMap<>(),params,true);
+        //currentTestCase.pass(MarkupHelper.createCodeBlock(response.asString(),CodeLanguage.JSON));
 
+    }
 
 //    @Test(dependsOnMethods = {"tc001_VerifyLoginBtnIsEnabled"},alwaysRun = true,description = "Test case 29622: [Login] : Verify that an error message is displayed on entering\n" +
 //            "invalid email id and password")

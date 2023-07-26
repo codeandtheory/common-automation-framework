@@ -1,4 +1,4 @@
-package com.yml.loreal.common;
+package com.yml.loreal.rest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
