@@ -50,28 +50,37 @@
         <apache.commons.version>3.1</apache.commons.version>
         <junit.version>4.13.2</junit.version>
         <webdrivermanager.version>5.2.1</webdrivermanager.version>
+        <lombok.version>1.18.28</lombok.version>
+        <rest-assured.version>5.3.0</rest-assured.version>
     </properties>
 
     <dependencies>
 
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>5.3.0</version>
+            <version>${rest-assured.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>json-path</artifactId>
-            <version>5.3.0</version>
+            <version>${rest-assured.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>5.3.0</version>
+            <version>${rest-assured.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -251,9 +260,11 @@
                 <version>2.22.2</version>
                 <configuration>
                     <systemPropertyVariables>
-                        <environment>${platform}</environment>
-                        <web-browser>${browser}</web-browser>
-                        <mode>${runMode}</mode>
+                        <test-platform>${platform}</test-platform>
+                        <test-web-browser>${browser}</test-web-browser>
+                        <test-run-mode>${runMode}</test-run-mode>
+                        <test-environment>${env}</test-environment>
+                        <api-environment>${apiEnv}</api-environment>
                     </systemPropertyVariables>
                     <suiteXmlFiles>
                         <suiteXmlFile>

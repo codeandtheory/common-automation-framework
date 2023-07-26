@@ -32,8 +32,13 @@ public class PlatformDriverProvider implements Provider<WebDriver> {
                 test.info("Appium Server Started Successfully");
                 test.info("Creating Platform Specific Driver for " + platform.getPlatformName());
             }
-            platformSpecificDriver = driverHelper.createDriver(platform.getPlatformName());
-            test.info("Driver Creation is successful");
+            if (!platform.isRestApis()) {
+                platformSpecificDriver = driverHelper.createDriver(platform.getPlatformName());
+                test.info("Driver Creation is successful");
+            }
+            else {
+                test.info("Driver Creation not Required for platform "+platform.getPlatformName());
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

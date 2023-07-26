@@ -13,6 +13,7 @@ import com.yml.loreal.pojo.Platform;
 import com.yml.loreal.pojo.User;
 import com.yml.loreal.prerequisite.ConfigurationModule;
 import com.yml.loreal.prerequisite.AppiumServerManager;
+import com.yml.loreal.rest.RequestUtil;
 import com.yml.loreal.screens.*;
 import com.yml.loreal.screens.login.ForgotPasswordScreen;
 import com.yml.loreal.screens.login.LoginScreen;
@@ -24,12 +25,16 @@ import org.testng.ITestResult;
 import org.testng.annotations.*;
 import org.testng.xml.XmlTest;
 
+import javax.inject.Named;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 @Guice(modules = {ConfigurationModule.class})
 public class TS_Loreal_BaseTest {
 
+    @Inject
+    @Named("apiUrl")
+    public String apiUrl;
 
     @Inject
     public WebDriver driver;
@@ -45,6 +50,9 @@ public class TS_Loreal_BaseTest {
 
     @Inject
     public CommonUtil commonUtil;
+
+    @Inject
+    public RequestUtil requestUtil;
 
     @Inject
     public SalonCentricCommons salonCentricCommons;

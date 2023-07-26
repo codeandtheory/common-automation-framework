@@ -1,7 +1,8 @@
-package com.yml.loreal.common;
+package com.yml.loreal.rest;
 
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.google.inject.Inject;
+import com.yml.loreal.common.CommonUtil;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;

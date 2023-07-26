@@ -39,7 +39,7 @@ public class PlatformActionProvider implements Provider<MobileDriverActionAdapte
                     platformSpecificActionClass=new WebDriverActions(driver,logger);
                     break;
             }
-            platformSpecificActionClass.setPlatform(platform);
+                platformSpecificActionClass.setPlatform(platform);
         } catch (Exception e) {
             e.printStackTrace();
             logger.severe(e.getMessage());

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 public class ExtentTestNGITestListener implements ITestListener {
 
-	private static final String reportFileName ="Report_"+LocalDateTime.now().toLocalDate().toString()+"***"+LocalDateTime.now().toLocalTime().toString();
+	private static final String reportFileName ="Report_"+LocalDateTime.now().toLocalDate().toString()+"_"+LocalDateTime.now().getNano();
 	private static ExtentReports extent = ExtentManager.createInstance("reports//"+reportFileName+".html");
 	private static ThreadLocal parentTest = new ThreadLocal();
     private static ThreadLocal test = new ThreadLocal();

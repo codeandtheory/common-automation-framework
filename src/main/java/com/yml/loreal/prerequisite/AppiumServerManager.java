@@ -9,6 +9,7 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import io.netty.util.concurrent.BlockingOperationException;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -261,7 +262,9 @@ public class AppiumServerManager {
         logger.info("Creating Driver for "+browserName);
         switch (browserName.toLowerCase()){
             case "chrome":
-               // WebDriverManager.chromedriver().setup();
+                if (executionMode.equalsIgnoreCase("cloud"))
+                    WebDriverManager.chromedriver().setup();
+
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("--remote-allow-origins=*");
                 options.addArguments("--no-sandbox");
