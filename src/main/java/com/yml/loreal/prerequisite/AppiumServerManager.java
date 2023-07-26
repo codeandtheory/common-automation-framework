@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -260,7 +261,13 @@ public class AppiumServerManager {
         logger.info("Creating Driver for "+browserName);
         switch (browserName.toLowerCase()){
             case "chrome":
-                driver=new ChromeDriver();
+               // WebDriverManager.chromedriver().setup();
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--remote-allow-origins=*");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--headless");
+                driver=executionMode.equalsIgnoreCase("cloud")?new ChromeDriver(options):new ChromeDriver();
                 break;
             case "safari":
                 driver=new SafariDriver();

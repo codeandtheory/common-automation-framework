@@ -49,11 +49,44 @@
         <java.inject.version>1</java.inject.version>
         <apache.commons.version>3.1</apache.commons.version>
         <junit.version>4.13.2</junit.version>
+        <webdrivermanager.version>5.2.1</webdrivermanager.version>
     </properties>
 
     <dependencies>
 
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>5.3.0</version>
+            <scope>test</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-path</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>5.3.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.box</groupId>
+            <artifactId>json-patch</artifactId>
+            <version>1.16</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>4.3.1</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -163,7 +196,11 @@
             <version>${selenium.java.version}</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>${webdrivermanager.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-java -->
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -215,6 +252,8 @@
                 <configuration>
                     <systemPropertyVariables>
                         <environment>${platform}</environment>
+                        <web-browser>${browser}</web-browser>
+                        <mode>${runMode}</mode>
                     </systemPropertyVariables>
                     <suiteXmlFiles>
                         <suiteXmlFile>

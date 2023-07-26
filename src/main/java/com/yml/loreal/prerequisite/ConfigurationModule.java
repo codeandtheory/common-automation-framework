@@ -66,6 +66,7 @@ public class ConfigurationModule extends AbstractModule {
     public Map<String, String> getConfigProperties() throws Exception {
 
         String platformPropMvn=System.getProperty("platform");
+        String runModeMvn=System.getProperty("runMode");
         logger.info("Platform from command-line "+platformPropMvn);
         Properties prop = new Properties();
         InputStream input = null;
@@ -77,9 +78,10 @@ public class ConfigurationModule extends AbstractModule {
 
             prop.load(input);
             this.platformName = platformPropMvn==null?prop.getProperty("AutomationPlatform"):platformPropMvn;
+            runModeMvn=runModeMvn == null?prop.getProperty("ExecutionMode"):runModeMvn;
             logger.info("Platform Name is - " + this.platformName);
             testPropertiesMap.put("platformName", this.platformName);
-            testPropertiesMap.put("executionMode", prop.getProperty("ExecutionMode")==null?"":prop.getProperty("ExecutionMode"));
+            testPropertiesMap.put("executionMode", runModeMvn==null?"local":runModeMvn);
             testPropertiesMap.put("appiumJsPathMac", prop.getProperty("AppiumJsPathMac")==null?"":prop.getProperty("AppiumJsPathMac"));
             testPropertiesMap.put("appiumJsPathWindows", prop.getProperty("AppiumJsPathWindows")==null?"":prop.getProperty("AppiumJsPathWindows"));
             testPropertiesMap.put("appiumJsPathLinux", prop.getProperty("AppiumJsPathLinux")==null?"":prop.getProperty("AppiumJsPathLinux"));
@@ -122,6 +124,7 @@ public class ConfigurationModule extends AbstractModule {
         Properties prop = new Properties();
         InputStream input = null;
         InputStream platformProps =null;
+        String browserName=null;
         try {
             switch (platformName.toLowerCase()) {
                 case "android":
@@ -138,6 +141,7 @@ public class ConfigurationModule extends AbstractModule {
                     platformProps = new FileInputStream(CommonUtil.getProjectDir() + "//src//main//resources//web//web_config.properties");
                     // load a properties file
                     prop.load(platformProps);
+                    browserName=System.getProperty("browser")==null? prop.getProperty("BrowserName") :System.getProperty("browser") ;
                     break;
                 default:
                     break;
@@ -151,7 +155,7 @@ public class ConfigurationModule extends AbstractModule {
             testPropertiesMap.put("platformDeviceId", prop.getProperty("DeviceId")==null?"":prop.getProperty("DeviceId"));
             testPropertiesMap.put("noReset", prop.getProperty("NoReset")==null?"true":prop.getProperty("NoReset"));
             testPropertiesMap.put("freshInstallApp", prop.getProperty("FreshInstallApp")==null?"false":prop.getProperty("FreshInstallApp"));
-            testPropertiesMap.put("browserName", prop.getProperty("BrowserName")==null?"":prop.getProperty("BrowserName"));
+            testPropertiesMap.put("browserName", browserName==null?"chrome":browserName);
             testPropertiesMap.put("url", prop.getProperty("Url")==null?"":prop.getProperty("Url"));
            // while (testPropertiesMap.values().remove(null));
             logger.info("Reading Platform Specific Properties files successful");
