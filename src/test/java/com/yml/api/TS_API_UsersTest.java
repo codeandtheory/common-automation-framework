@@ -1,17 +1,11 @@
 package com.yml.api;
 
-import com.aventstack.extentreports.markuputils.CodeLanguage;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
-import com.yml.loreal.common.CommonUtil;
-import com.yml.loreal.rest.ApiEndPoints;
+import com.yml.framework.aut.rest.ApiEndPoints;
 import io.restassured.response.Response;
-import org.json.JSONObject;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class TS_API_UsersTest extends  TS_API_BaseTest{
 

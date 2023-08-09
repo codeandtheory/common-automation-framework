@@ -44,12 +44,12 @@
         <slf4j.version>2.0.0-alpha7</slf4j.version>
         <cucumber.version>7.13.0</cucumber.version>
         <google-inject.version>5.0.1</google-inject.version>
-        <selenium.java.version>4.9.1</selenium.java.version>
+        <selenium.java.version>4.11.0</selenium.java.version>
         <org.reflection.version>0.10.1</org.reflection.version>
         <java.inject.version>1</java.inject.version>
         <apache.commons.version>3.1</apache.commons.version>
         <junit.version>4.13.2</junit.version>
-        <webdrivermanager.version>5.2.1</webdrivermanager.version>
+        <webdrivermanager.version>5.4.1</webdrivermanager.version>
         <lombok.version>1.18.28</lombok.version>
         <rest-assured.version>5.3.0</rest-assured.version>
     </properties>
@@ -63,12 +63,12 @@
                 <scope>provided</scope>
             </dependency>
 
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>${rest-assured.version}</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.rest-assured</groupId>-->
+<!--            <artifactId>rest-assured</artifactId>-->
+<!--            <version>${rest-assured.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -139,10 +139,23 @@
         <!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
 
 
+<!--        <dependency>-->
+<!--            <groupId>com.aventstack</groupId>-->
+<!--            <artifactId>extentreports</artifactId>-->
+<!--            <version>${extentreports.version}</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
-            <version>${extentreports.version}</version>
+            <version>5.0.5</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>tech.grasshopper</groupId>
+            <artifactId>extentreports-cucumber7-adapter</artifactId>
+            <version>1.8.3</version>
         </dependency>
 
         <dependency>
@@ -223,6 +236,12 @@
             <version>${cucumber.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-guice</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -246,14 +265,14 @@
                     <compilerArgument>-proc:none </compilerArgument>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <source>8</source>-->
+<!--                    <target>8</target>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

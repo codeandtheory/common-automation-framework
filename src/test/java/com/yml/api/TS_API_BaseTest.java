@@ -4,11 +4,11 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.google.inject.Inject;
-import com.yml.loreal.common.CommonUtil;
-import com.yml.loreal.pojo.Platform;
-import com.yml.loreal.pojo.User;
-import com.yml.loreal.prerequisite.ConfigurationModule;
-import com.yml.loreal.rest.RequestUtil;
+import com.yml.framework.common.CommonUtil;
+import com.yml.framework.common.Platform;
+import com.yml.framework.aut.pojo.User;
+import com.yml.framework.prerequisite.ConfigurationModule;
+import com.yml.framework.common.RequestUtil;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 import org.testng.xml.XmlTest;
@@ -90,7 +90,7 @@ public class TS_API_BaseTest {
                     break;
                 case 2:
                     currentTestCase.log(Status.FAIL,"FAIlED");
-                    currentTestCase.error(CommonUtil.getStringForReport(result.getThrowable().getMessage()));
+                    currentTestCase.fail(CommonUtil.getStringForReport(result.getThrowable().getMessage()));
                     break;
                 case 3:
                 default:
@@ -101,7 +101,7 @@ public class TS_API_BaseTest {
 
             }
         } catch (Exception e) {
-            currentTestCase.error(e);
+            currentTestCase.fail(e);
         }
         currentTestCase.info("<pre>ENDING TESTCASE...." + result.getName() + " </pre> ");
 
