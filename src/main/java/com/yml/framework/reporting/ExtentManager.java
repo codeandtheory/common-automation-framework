@@ -16,6 +16,8 @@ public class ExtentManager {
     public static String reportTitle;
 
 	public static String runMode;
+
+    public static  String browserName;
 	
     private static ExtentReports extent;
     private static ExtentTest test;
@@ -41,7 +43,6 @@ public class ExtentManager {
         extent.attachReporter(htmlReporter);
         extent.setSystemInfo("OS", System.getProperty("os.name"));
         //extent.setSystemInfo("Host Name", "LOREAL-YML");
-        extent.setSystemInfo("Automation Platform",platformName);
          return extent;
     }
     

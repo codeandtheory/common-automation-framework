@@ -3,6 +3,7 @@ package com.yml.framework.bdd.stepdef;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
+import com.aventstack.extentreports.service.ExtentService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.yml.framework.common.Platform;
@@ -22,8 +23,14 @@ public class CucumberHooks extends CommonSteps {
     public String url;
 
 
+    @Inject
+    @Named("browserName")
+    public String browserName;
+
     @BeforeAll
-    public static void setInjector() {
+    public static void setInfo() {
+
+
     }
 
     @Before(order = 0)
@@ -41,6 +48,9 @@ public class CucumberHooks extends CommonSteps {
         else {
 
         }
+        ExtentService.getInstance().setSystemInfo("Platform Name", platform.getPlatformName());
+        ExtentService.getInstance().setSystemInfo("Operating System", System.getProperty("os.name"));
+        ExtentService.getInstance().setSystemInfo("Browser Name", browserName);
     }
 
 //    @BeforeStep
@@ -53,7 +63,7 @@ public class CucumberHooks extends CommonSteps {
 
     @After(order = 0)
     public void afterEachStep(Scenario scenario) {
-        ExtentTest currentTestCase=ExtentCucumberAdapter.getCurrentStep();
+        ExtentTest currentTestCase = ExtentCucumberAdapter.getCurrentStep();
         int status = scenario.isFailed() ? 2 : 1;
         try {
             switch (status) {
@@ -67,7 +77,7 @@ public class CucumberHooks extends CommonSteps {
                 case 3:
                 default:
                     String screenshotSkip = commonUtil.getScreenShot(driver, scenario.getName());
-                    currentTestCase.skip( "TEST SKIPPED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotSkip).build());
+                    currentTestCase.skip("TEST SKIPPED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotSkip).build());
                     currentTestCase.skip("TEST SKIPPED ");
                     break;
 

@@ -50,7 +50,7 @@ public class ConfigurationModule extends AbstractModule {
        try {
 
            extent = ExtentManager.getInstance();
-           requestStaticInjection(ExtentReports.class);
+           //requestStaticInjection(ExtentReports.class);
            Names.bindProperties(binder(), getConfigProperties());
            bind(ExtentReports.class).toInstance(extent);
            bind(PlatformDriverManager.class);
@@ -107,8 +107,8 @@ public class ConfigurationModule extends AbstractModule {
             testPropertiesMap.putAll(getApiEnvProperties(apiEnvMvn,test));
            // test.info("Reading Configs and Platform specific file");
             testPropertiesMap.putAll(getPlatformSpecificProperties(this.platformName,test));
-            ExtentManager.platformName=platformName;
-            ExtentManager.reportTitle=prop.getProperty("ReportTitle");
+            extent.setSystemInfo("Automation Platform",platformName);
+            extent.setSystemInfo("Browser Name",testPropertiesMap.get("browserName"));
 
         }
         catch (IOException ex) {
