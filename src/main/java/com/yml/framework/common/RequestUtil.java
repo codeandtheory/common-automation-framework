@@ -2,7 +2,6 @@ package com.yml.framework.common;
 
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.google.inject.Inject;
-import com.yml.framework.common.CommonUtil;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
@@ -42,7 +41,7 @@ public class RequestUtil {
      */
     public Response getRequestWithHeadersAndParam(String url, Map<String, Object> headers, Map<String, Object> parameters, boolean isLoggingRequired) {
 
-        printRequestLogsToConsole("GET", url, headers, parameters,"");
+        printRequestLogsToConsole("GET", url, headers, parameters, "");
         Response response = null;
         if (isLoggingRequired)
             printReqLogsToReport("GET", url, headers, parameters);
@@ -69,7 +68,7 @@ public class RequestUtil {
 
     public Response postRequestWithHeadersAndParam(String url, Map<String, Object> headers, Map<String, Object> body, boolean isLoggingRequired) {
 
-        printRequestLogsToConsole("POST", url, headers, null,body.toString());
+        printRequestLogsToConsole("POST", url, headers, null, body.toString());
         Response response = null;
         if (isLoggingRequired)
             printReqLogsToReport("POST", url, headers, body);
@@ -165,7 +164,7 @@ public class RequestUtil {
 
         Response response = null;
         if (isLoggingRequired)
-            printReqLogsToReport("DELETE", url, headers,new JSONObject());
+            printReqLogsToReport("DELETE", url, headers, new JSONObject());
         try {
             response = RestAssured.given().headers(headers)
                     .delete(url)
@@ -184,7 +183,7 @@ public class RequestUtil {
     public Response postRequestWithBasicAuth(String url, String username, String pwd, Map<String, Object> headers, Object body, boolean isLoggingRequired) {
 
         Response response = null;
-        printRequestLogsToConsole("POST", url, headers, null,body);
+        printRequestLogsToConsole("POST", url, headers, null, body);
         if (isLoggingRequired) {
             commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>LOGIN DETAILS - </b>" + " username : <b>" + username + "</b> , password: <b>" + pwd + "</b>"));
             printReqLogsToReport("POST", url, headers, body);
@@ -218,20 +217,29 @@ public class RequestUtil {
 
     public void printReqLogsToReport(String httpMethod, String apiEndPoint, Map<String, Object> apiHeaders, Object apiRequest) {
 
-        if (httpMethod !=null)
+        if (httpMethod != null) {
             commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>REQUEST METHOD </b>" + httpMethod));
-        if (apiEndPoint !=null)
+            switch (httpMethod.toUpperCase()) {
+                case "GET":
+                    if (apiRequest != null)
+                        commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>REQUEST PARAMETER</b>\n\n" + apiRequest.toString()));
+                    break;
+                case "POST":
+                default:
+                    if (apiRequest != null)
+                        commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>REQUEST BODY</b>\n\n" + CommonUtil.getFormattedJSON(apiRequest.toString())));
+                    break;
+            }
+        }
+        if (apiEndPoint != null)
             commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>REQUEST URL</b> \n\n" + apiEndPoint));
-        if (apiHeaders !=null)
+        if (apiHeaders != null)
             commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>REQUEST HEADERS</b> \n\n" + CommonUtil.prettyPrintHeaders(apiHeaders)));
-        if (apiRequest !=null)
-          commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>REQUEST BODY</b>\n\n" + CommonUtil.getFormattedJSON(apiRequest.toString())));
-
     }
 
     public void printResponseLogsToReport(Response apiResponse) {
 
-        if (apiResponse !=null) {
+        if (apiResponse != null) {
             commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>RESPONSE CODE</b> " + apiResponse.getStatusCode()));
             commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>RESPONSE HEADERS</b> \n\n" + apiResponse.getHeaders()));
             commonUtil.getCurrentTestInstance().info(CommonUtil.getStringForReport("<b>RESPONSE BODY </b>\n\n" + apiResponse.asPrettyString()));
@@ -247,26 +255,26 @@ public class RequestUtil {
 
     }
 
-    public void printRequestLogsToConsole(String reqMethod, String reqUrl, Map<String,Object> headers, Map<String,Object> parameters, Object body){
+    public void printRequestLogsToConsole(String reqMethod, String reqUrl, Map<String, Object> headers, Map<String, Object> parameters, Object body) {
 
-        logger.info("Making "+reqMethod+" Request to "+reqUrl);
-        logger.info("Request Headers \n"+CommonUtil.prettyPrintHeaders(headers));
-        logger.info("Request Parameters \n"+parameters);
-        logger.info("Request Body \n"+body.toString());
+        logger.info("Making " + reqMethod + " Request to " + reqUrl);
+        logger.info("Request Headers \n" + CommonUtil.prettyPrintHeaders(headers));
+        logger.info("Request Parameters \n" + parameters);
+        logger.info("Request Body \n" + body.toString());
 
- }
+    }
 
-    public void printResponseLogsToConsole(Response response){
+    public void printResponseLogsToConsole(Response response) {
 
-        logger.info("API Response:\n"+CommonUtil.getFormattedJSON(response.asString()));
-        logger.info("Response Headers \n"+response.getHeaders());
-      }
+        logger.info("API Response:\n" + CommonUtil.getFormattedJSON(response.asString()));
+        logger.info("Response Headers \n" + response.getHeaders());
+    }
 
 
-    public void printExceptionLogsToConsole(Exception e){
+    public void printExceptionLogsToConsole(Exception e) {
 
-        logger.log(Level.SEVERE,"Request failed...");
-        logger.log(Level.SEVERE," Failed Message ::"+e.getLocalizedMessage());
+        logger.log(Level.SEVERE, "Request failed...");
+        logger.log(Level.SEVERE, " Failed Message ::" + e.getLocalizedMessage());
         e.printStackTrace();
     }
 

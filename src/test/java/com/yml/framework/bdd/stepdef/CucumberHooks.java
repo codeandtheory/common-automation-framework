@@ -3,11 +3,13 @@ package com.yml.framework.bdd.stepdef;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.service.ExtentService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.yml.framework.common.Platform;
 import com.yml.framework.prerequisite.PlatformDriverManager;
+import com.yml.framework.reporting.ExtentManager;
 import io.cucumber.java.*;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -30,8 +32,13 @@ public class CucumberHooks extends CommonSteps {
     public String browserName;
 
     @Inject
-    @Named("reportTitle")
-    public String reportTitle;
+    @Named("uiEnv")
+    public String uiEnv;
+
+    @Inject
+    @Named("apiEnv")
+    public String apiEnv;
+
 
     @BeforeAll
     public static void setInfo() {
@@ -59,6 +66,9 @@ public class CucumberHooks extends CommonSteps {
         ExtentService.getInstance().setSystemInfo("Platform Name", platform.getPlatformName());
         ExtentService.getInstance().setSystemInfo("Operating System", System.getProperty("os.name"));
         ExtentService.getInstance().setSystemInfo("Browser Name", browserName);
+        ExtentService.getInstance().setSystemInfo("FE/UI Env", uiEnv);
+        ExtentService.getInstance().setSystemInfo("BE/API Env", apiEnv);
+
     }
 
 //    @BeforeStep
@@ -121,6 +131,7 @@ public class CucumberHooks extends CommonSteps {
 
         try {
             webDriver.quit();
+            ExtentService.getInstance().flush();
             if (platform.isIOS() || platform.isAndroid()) {
                 CucumberHooks.serverManager.stopAppiumServer();
 

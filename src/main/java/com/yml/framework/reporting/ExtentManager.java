@@ -11,10 +11,12 @@ import com.yml.framework.common.CommonUtil;
 public class ExtentManager {
 
 
+    public static ExtentSparkReporter htmlReporter;
     public static String reportTitle;
 
     private static ExtentReports extent;
     private static ExtentTest test;
+
 
     public static ExtentReports getInstance() {
         if (extent == null)
@@ -25,15 +27,11 @@ public class ExtentManager {
 
     public static ExtentReports createInstance(String fileName) {
         // ExtentHtmlReporter htmlReporter = new ExtentHtmlReporter(fileName);
-        ExtentSparkReporter htmlReporter = new ExtentSparkReporter(fileName);
+        htmlReporter = new ExtentSparkReporter(fileName);
 
         htmlReporter.config().setTheme(Theme.STANDARD);
         htmlReporter.config().setEncoding("utf-8");
-        if (reportTitle == null || reportTitle.equalsIgnoreCase(""))
-            reportTitle = "UI Automation Report";
-
-        htmlReporter.config().setDocumentTitle(reportTitle);
-        htmlReporter.config().setReportName(reportTitle);
+        setReportTitle(reportTitle);
         extent = new ExtentReports();
         extent.attachReporter(htmlReporter);
         extent.setSystemInfo("OS", System.getProperty("os.name"));
@@ -41,6 +39,13 @@ public class ExtentManager {
         return extent;
     }
 
+
+    public static void setReportTitle(String reportTitle){
+        if (reportTitle == null || reportTitle.equalsIgnoreCase(""))
+            reportTitle = "UI Automation Report";
+        htmlReporter.config().setDocumentTitle(reportTitle);
+        htmlReporter.config().setReportName(reportTitle);
+    }
 
     public static ExtentTest createTest(String name, String description) {
         test = extent.createTest(name, description);
