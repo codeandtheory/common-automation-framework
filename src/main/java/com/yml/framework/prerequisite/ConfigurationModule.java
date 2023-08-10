@@ -102,7 +102,7 @@ public class ConfigurationModule extends AbstractModule {
             testPropertiesMap.put("username", prop.getProperty("Username")==null?"":prop.getProperty("Username"));
             testPropertiesMap.put("password", prop.getProperty("Password")==null?"":prop.getProperty("Password"));
             testPropertiesMap.put("teamId", prop.getProperty("IosTeamId")==null?"":prop.getProperty("IosTeamId"));
-            testPropertiesMap.put("reportTitle", prop.getProperty("ReportTitle")==null?"":prop.getProperty("ReportTitle"));
+            testPropertiesMap.put("reportTitle", prop.getProperty("ReportTitle")==null?"Automation Report":prop.getProperty("ReportTitle"));
             test.pass(CommonUtil.getStringForReport("<b>Reading Config file from "+configFileLocation+"</b>\n"+new JSONObject(testPropertiesMap).toString(1)));
             testPropertiesMap.putAll(getApiEnvProperties(apiEnvMvn,test));
            // test.info("Reading Configs and Platform specific file");

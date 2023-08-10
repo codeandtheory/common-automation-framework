@@ -1,14 +1,19 @@
 package com.yml.framework.bdd.stepdef;
 
+import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.service.ExtentService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.yml.framework.common.Platform;
 import com.yml.framework.prerequisite.PlatformDriverManager;
+import com.yml.framework.reporting.ExtentManager;
 import io.cucumber.java.*;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 public class CucumberHooks extends CommonSteps {
@@ -26,6 +31,10 @@ public class CucumberHooks extends CommonSteps {
     @Inject
     @Named("browserName")
     public String browserName;
+
+    @Inject
+    @Named("reportTitle")
+    public String reportTitle;
 
     @BeforeAll
     public static void setInfo() {
@@ -48,6 +57,8 @@ public class CucumberHooks extends CommonSteps {
         else {
 
         }
+
+
         ExtentService.getInstance().setSystemInfo("Platform Name", platform.getPlatformName());
         ExtentService.getInstance().setSystemInfo("Operating System", System.getProperty("os.name"));
         ExtentService.getInstance().setSystemInfo("Browser Name", browserName);
@@ -89,8 +100,12 @@ public class CucumberHooks extends CommonSteps {
 
 
     @After(order = 1)
-    public void cleanUp() {
+    public void cleanUp(Scenario scenario) {
         super.setScreens();
+        if(scenario.isFailed()) {
+            final byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshot, "image/png", scenario.getName());
+        }
         try {
             if (platform.isWeb()) {
                 mobileDriverAction.clearBrowserCacheAndCookies();
