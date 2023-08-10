@@ -5,4 +5,4 @@ target/
 *.apk
 *.ipa
 src/main/resources/chromedriver/
-automation-log.log
+automation-log.*
