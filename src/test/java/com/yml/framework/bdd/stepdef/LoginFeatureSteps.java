@@ -26,21 +26,21 @@ public class LoginFeatureSteps extends CommonSteps {
     @When("I enter valid credentials and click on login button")
     public void loginWithValidCredentials() {
 
+        boolean isLoginSuccess=false;
         try {
 
             //ExtentTest currentTestCase = ExtentCucumberAdapter.getCurrentStep();
             //setScreens(currentTestCase);
             //salonCentricCommons.setCurrentTestCase(currentTestCase);
             super.setScreens();
-           salonCentricCommons.loginToSalonCentric(user);
+            isLoginSuccess=salonCentricCommons.loginToSalonCentric(user);
             //boolean isLoginSuccess=salonCentricCommons.loginToSalonCentric(user);
-            Assert.assertTrue(true,"Login Failed");
-        } catch (Exception e) {
-            e.printStackTrace();
-            ExtentCucumberAdapter.getCurrentStep().fail(e.getMessage());
-            //currentTestCase.error(e);
+            } catch (Exception e) {
+              isLoginSuccess=false;
+              e.printStackTrace();
+              ExtentCucumberAdapter.getCurrentStep().fail(e.getMessage());
         }
-
+        Assert.assertTrue(isLoginSuccess,"Login Failed");
     }
 
     @Then("I should fetch the APIs")

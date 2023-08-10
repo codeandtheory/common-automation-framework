@@ -1,16 +1,13 @@
 package com.yml.framework.bdd.stepdef;
 
-import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.service.ExtentService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.yml.framework.common.Platform;
 import com.yml.framework.prerequisite.PlatformDriverManager;
-import com.yml.framework.reporting.ExtentManager;
 import io.cucumber.java.*;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -72,24 +69,24 @@ public class CucumberHooks extends CommonSteps {
 //
 //    }
 
-    @After(order = 0)
-    public void afterEachStep(Scenario scenario) {
+
+    public void getScenarioStatus(Scenario scenario) {
         ExtentTest currentTestCase = ExtentCucumberAdapter.getCurrentStep();
         int status = scenario.isFailed() ? 2 : 1;
         try {
             switch (status) {
                 case 1:
-                    currentTestCase.pass("TEST PASSED");
+                    currentTestCase.pass("SCENARIO PASSED");
                     break;
                 case 2:
                     String screenshotPath = commonUtil.getScreenShot(driver, scenario.getName());
-                    currentTestCase.fail("TEST FAILED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
+                    currentTestCase.fail("SCENARIO FAILED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
                     break;
                 case 3:
                 default:
                     String screenshotSkip = commonUtil.getScreenShot(driver, scenario.getName());
-                    currentTestCase.skip("TEST SKIPPED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotSkip).build());
-                    currentTestCase.skip("TEST SKIPPED ");
+                    currentTestCase.skip("SCENARIO SKIPPED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotSkip).build());
+                    currentTestCase.skip("SCENARIO SKIPPED ");
                     break;
 
             }
@@ -99,13 +96,10 @@ public class CucumberHooks extends CommonSteps {
     }
 
 
-    @After(order = 1)
+    @After
     public void cleanUp(Scenario scenario) {
         super.setScreens();
-        if(scenario.isFailed()) {
-            final byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-            scenario.attach(screenshot, "image/png", scenario.getName());
-        }
+        getScenarioStatus(scenario);
         try {
             if (platform.isWeb()) {
                 mobileDriverAction.clearBrowserCacheAndCookies();
@@ -123,7 +117,7 @@ public class CucumberHooks extends CommonSteps {
     }
 
     @AfterAll
-    public static void cleanUpA() {
+    public static void stopHook() {
 
         try {
             webDriver.quit();

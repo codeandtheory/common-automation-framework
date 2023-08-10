@@ -243,10 +243,10 @@ public class CommonUtil {
         File source = ts.getScreenshotAs(OutputType.FILE);
         //after execution, you could see a folder "FailedTestsScreenshots" under src folder
         String screenShotName=screenshotName+dateName+".png";
-        String destination =  getProjectDir() + "/reports/"+screenShotName;
+        String destination =  getProjectDir() + "/reports/screenshots/"+screenShotName;
         File finalDestination = new File(destination);
         FileUtils.copyFile(source, finalDestination);
-        return screenShotName;
+        return destination;
     }
 
     public JSONArray readFileAsJSONArray(String resourceNameWithPath){
