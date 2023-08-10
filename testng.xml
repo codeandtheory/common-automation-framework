@@ -3,14 +3,15 @@
 <suite name="Suite">
 
     <listeners>
-        <listener class-name="com.yml.loreal.reporting.ExtentTestNGITestListener" />
+        <listener class-name="com.yml.framework.reporting.ExtentTestNGITestListener" />
     </listeners>
 
     <test name="Loreal Sanity Test">
         <classes>
-            <class name="com.yml.loreal.testscripts.TS_Loreal_LoginScreenTest"/>
+            <class name="com.yml.framework.testscripts.TS_Loreal_LoginScreenTest"/>
         </classes>
     </test>
+
 
 
 </suite>
