@@ -77,7 +77,7 @@ public class ConfigurationModule extends AbstractModule {
         test = extent.createTest("Reading Test Environment and Platform specific Properties");
         String platformPropMvn = System.getProperty("platform");
         String runModeMvn = System.getProperty("runMode");
-        String envMvn = System.getProperty("env");
+        String uiEnvMvn = System.getProperty("env");
         String apiEnvMvn = System.getProperty("apiEnv");
         String configFileLocation = "//src//main//resources//config.properties";
         logger.info("Platform from command-line " + platformPropMvn);
@@ -93,11 +93,13 @@ public class ConfigurationModule extends AbstractModule {
             this.platformName = platformPropMvn == null ? prop.getProperty("AutomationPlatform") : platformPropMvn;
             runModeMvn = runModeMvn == null ? prop.getProperty("ExecutionMode") : runModeMvn;
             apiEnvMvn = apiEnvMvn == null ? prop.getProperty("ApiEnv") : apiEnvMvn;
+            uiEnvMvn = uiEnvMvn == null ? prop.getProperty("UiEnv") : uiEnvMvn;
             logger.info("Platform Name is - " + this.platformName);
             test.info("Platform Name is - " + this.platformName);
             testPropertiesMap.put("platformName", this.platformName);
             testPropertiesMap.put("executionMode", runModeMvn == null ? "local" : runModeMvn);
-            testPropertiesMap.put("apEnv", apiEnvMvn == null ? "prod" : apiEnvMvn);
+            testPropertiesMap.put("apiEnv", apiEnvMvn == null ? "prod" : apiEnvMvn);
+            testPropertiesMap.put("uiEnv", uiEnvMvn == null ? "prod" : uiEnvMvn);
             testPropertiesMap.put("appiumJsPathMac", prop.getProperty("AppiumJsPathMac") == null ? "" : prop.getProperty("AppiumJsPathMac"));
             testPropertiesMap.put("appiumJsPathWindows", prop.getProperty("AppiumJsPathWindows") == null ? "" : prop.getProperty("AppiumJsPathWindows"));
             testPropertiesMap.put("appiumJsPathLinux", prop.getProperty("AppiumJsPathLinux") == null ? "" : prop.getProperty("AppiumJsPathLinux"));
@@ -105,13 +107,16 @@ public class ConfigurationModule extends AbstractModule {
             testPropertiesMap.put("username", prop.getProperty("Username") == null ? "" : prop.getProperty("Username"));
             testPropertiesMap.put("password", prop.getProperty("Password") == null ? "" : prop.getProperty("Password"));
             testPropertiesMap.put("teamId", prop.getProperty("IosTeamId") == null ? "" : prop.getProperty("IosTeamId"));
-            testPropertiesMap.put("reportTitle", prop.getProperty("ReportTitle") == null ? "Automation Report" : prop.getProperty("ReportTitle"));
+            testPropertiesMap.put("reportTitle", prop.getProperty("ReportTitle") == null ? "UI Automation Report" : prop.getProperty("ReportTitle"));
             test.pass(CommonUtil.getStringForReport("<b>Reading Config file from " + configFileLocation + "</b>\n" + new JSONObject(testPropertiesMap).toString(1)));
             testPropertiesMap.putAll(getApiEnvProperties(apiEnvMvn, test));
             // test.info("Reading Configs and Platform specific file");
-            testPropertiesMap.putAll(getPlatformSpecificProperties(this.platformName, test));
+            testPropertiesMap.putAll(getPlatformSpecificProperties(this.platformName, test,uiEnvMvn));
+            ExtentManager.setReportTitle(testPropertiesMap.get("reportTitle"));
             extent.setSystemInfo("Automation Platform", platformName);
             extent.setSystemInfo("Browser Name", testPropertiesMap.get("browserName"));
+            extent.setSystemInfo("FE/UI Environment", uiEnvMvn);
+            extent.setSystemInfo("BE/API Environment", apiEnvMvn);
 
         } catch (IOException ex) {
             logger.log(Level.SEVERE, "Reading config file failed..");
@@ -135,7 +140,7 @@ public class ConfigurationModule extends AbstractModule {
     }
 
 
-    public Map<String, String> getPlatformSpecificProperties(String platformName, ExtentTest test) throws Exception {
+    public Map<String, String> getPlatformSpecificProperties(String platformName, ExtentTest test,String uiEnv) throws Exception {
 
         Map<String, String> platformPropertiesMap = new HashMap<String, String>();
         // test.info("Reading Platform Specific Config file .."+platformName);
@@ -145,6 +150,7 @@ public class ConfigurationModule extends AbstractModule {
         InputStream input = null;
         InputStream platformProps = null;
         String browserName = null;
+        String appUrl="";
         try {
             switch (platformName.toLowerCase()) {
                 case "android":
@@ -165,6 +171,7 @@ public class ConfigurationModule extends AbstractModule {
                     platformProps = new FileInputStream(CommonUtil.getProjectDir() + fileLocation);
                     // load a properties file
                     prop.load(platformProps);
+                    appUrl=getApplicationUrl(uiEnv,prop);
                     browserName = System.getProperty("browser") == null ? prop.getProperty("BrowserName") : System.getProperty("browser");
                     break;
 
@@ -181,12 +188,11 @@ public class ConfigurationModule extends AbstractModule {
             platformPropertiesMap.put("noReset", prop.getProperty("NoReset") == null ? "true" : prop.getProperty("NoReset"));
             platformPropertiesMap.put("freshInstallApp", prop.getProperty("FreshInstallApp") == null ? "false" : prop.getProperty("FreshInstallApp"));
             platformPropertiesMap.put("browserName", browserName == null ? "chrome" : browserName);
-            platformPropertiesMap.put("url", prop.getProperty("Url") == null ? "" : prop.getProperty("Url"));
+            platformPropertiesMap.put("url", appUrl == null ? "" : appUrl);
 
             //test.info("Platform Specific File Location <b>"+fileLocation+"</b>");
             // while (testPropertiesMap.values().remove(null));
             logger.info("Reading Platform Specific Properties files successful");
-            extent.setSystemInfo("Test Environment", platformName);
             // extent.setSystemInfo("Test Environment Url",testPropertiesMap.get("envUrl"));
             test.pass(CommonUtil.getStringForReport("Test  Environment is <b>" + platformName + "</b>"));
             logger.info("Test Environment Properties.." + testPropertiesMap);
@@ -278,4 +284,22 @@ public class ConfigurationModule extends AbstractModule {
     }
 
 
+    public String getApplicationUrl(String uiEnv, Properties uiProps) {
+        String appurl = null;
+        switch (uiEnv.substring(0, 2).toLowerCase()) {
+            case "pr":
+                appurl = uiProps.getProperty("env.prod.url");
+                break;
+            case "st":
+                appurl = uiProps.getProperty("env.stage.url");
+                break;
+            case "qa":
+                appurl = uiProps.getProperty("env.qa.url");
+                break;
+            default:
+                appurl = uiProps.getProperty("env.prod.url");
+        }
+
+        return appurl;
+    }
 }
