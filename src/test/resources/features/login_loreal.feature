@@ -9,5 +9,6 @@ Feature: Login Feature
     When I enter valid credentials and click on login button
     #Then I should be redirected to the UserDashboard
 
+  @smoke
   Scenario: Successful Fetch Values from Api
     Then I should fetch the APIs

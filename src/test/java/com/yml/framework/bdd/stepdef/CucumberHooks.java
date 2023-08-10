@@ -3,16 +3,12 @@ package com.yml.framework.bdd.stepdef;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.service.ExtentService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.yml.framework.common.Platform;
 import com.yml.framework.prerequisite.PlatformDriverManager;
-import com.yml.framework.reporting.ExtentManager;
 import io.cucumber.java.*;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 public class CucumberHooks extends CommonSteps {
@@ -25,19 +21,6 @@ public class CucumberHooks extends CommonSteps {
     @Inject
     @Named("url")
     public String url;
-
-
-    @Inject
-    @Named("browserName")
-    public String browserName;
-
-    @Inject
-    @Named("uiEnv")
-    public String uiEnv;
-
-    @Inject
-    @Named("apiEnv")
-    public String apiEnv;
 
 
     @BeforeAll
@@ -62,13 +45,6 @@ public class CucumberHooks extends CommonSteps {
 
         }
 
-
-        ExtentService.getInstance().setSystemInfo("Platform Name", platform.getPlatformName());
-        ExtentService.getInstance().setSystemInfo("Operating System", System.getProperty("os.name"));
-        ExtentService.getInstance().setSystemInfo("Browser Name", browserName);
-        ExtentService.getInstance().setSystemInfo("FE/UI Env", uiEnv);
-        ExtentService.getInstance().setSystemInfo("BE/API Env", apiEnv);
-
     }
 
 //    @BeforeStep
@@ -89,12 +65,12 @@ public class CucumberHooks extends CommonSteps {
                     currentTestCase.pass("SCENARIO PASSED");
                     break;
                 case 2:
-                    String screenshotPath = commonUtil.getScreenShot(driver, scenario.getName());
+                    String screenshotPath = commonUtil.getScreenShot(driver, scenario.getName().substring(0,2));
                     currentTestCase.fail("SCENARIO FAILED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
                     break;
                 case 3:
                 default:
-                    String screenshotSkip = commonUtil.getScreenShot(driver, scenario.getName());
+                    String screenshotSkip = commonUtil.getScreenShot(driver, scenario.getName().substring(0,2));
                     currentTestCase.skip("SCENARIO SKIPPED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotSkip).build());
                     currentTestCase.skip("SCENARIO SKIPPED ");
                     break;
