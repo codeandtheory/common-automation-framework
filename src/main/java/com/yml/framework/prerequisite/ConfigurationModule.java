@@ -113,6 +113,7 @@ public class ConfigurationModule extends AbstractModule {
             // test.info("Reading Configs and Platform specific file");
             testPropertiesMap.putAll(getPlatformSpecificProperties(this.platformName, test,uiEnvMvn));
             ExtentManager.setReportTitle(testPropertiesMap.get("reportTitle"));
+            extent.setSystemInfo("Execution Mode", runModeMvn);
             extent.setSystemInfo("Automation Platform", platformName);
             extent.setSystemInfo("Browser Name", testPropertiesMap.get("browserName"));
             extent.setSystemInfo("FE/UI Environment", uiEnvMvn);
