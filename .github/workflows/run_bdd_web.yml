@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Run TestSuite For Web Browser
+name: Run BDD scenarios For Web Browser
 
 on:
   workflow_dispatch:
