@@ -262,11 +262,15 @@ public class PlatformDriverManager {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
-                options.addArguments("--remote-allow-origins=*");
-                options.addArguments("--no-sandbox");
-                options.addArguments("--disable-dev-shm-usage");
-                options.addArguments("--headless");
-                driver=executionMode.equalsIgnoreCase("cloud")?new ChromeDriver(options):new ChromeDriver();
+                options.addArguments("start-maximized");
+                if (executionMode.equalsIgnoreCase("cloud")) {
+                    options.addArguments("--remote-allow-origins=*");
+                    options.addArguments("--no-sandbox");
+                    options.addArguments("--disable-dev-shm-usage");
+                    options.addArguments("--headless");
+                }
+                //driver=executionMode.equalsIgnoreCase("cloud")?new ChromeDriver(options):new ChromeDriver();
+                driver=new ChromeDriver(options);
                 break;
             case "safari":
                 WebDriverManager.safaridriver().setup();
