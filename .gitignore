@@ -5,6 +5,5 @@ reports/*
 target/
 *.class
 *.apk
-*.ipa
 src/main/resources/chromedriver/
 automation-log.*

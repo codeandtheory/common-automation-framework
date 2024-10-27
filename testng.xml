@@ -8,7 +8,7 @@
 
     <test name="Loreal Sanity Test">
         <classes>
-            <class name="com.yml.framework.testscripts.TS_Loreal_LoginScreenTest"/>
+            <class name="com.yml.ios.TS_YML_SampleTest"/>
         </classes>
     </test>
 

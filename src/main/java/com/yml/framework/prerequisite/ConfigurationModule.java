@@ -79,6 +79,7 @@ public class ConfigurationModule extends AbstractModule {
         String runModeMvn = System.getProperty("runMode");
         String uiEnvMvn = System.getProperty("env");
         String apiEnvMvn = System.getProperty("apiEnv");
+        String testReportTitleMvn = System.getProperty("reportTitle");
         String configFileLocation = "//src//main//resources//config.properties";
         logger.info("Platform from command-line " + platformPropMvn);
         Properties prop = new Properties();
@@ -94,9 +95,16 @@ public class ConfigurationModule extends AbstractModule {
             runModeMvn = runModeMvn == null ? prop.getProperty("ExecutionMode") : runModeMvn;
             apiEnvMvn = apiEnvMvn == null ? prop.getProperty("ApiEnv") : apiEnvMvn;
             uiEnvMvn = uiEnvMvn == null ? prop.getProperty("UiEnv") : uiEnvMvn;
+            testReportTitleMvn = testReportTitleMvn == null ? prop.getProperty("ReportTitle") : testReportTitleMvn;
             logger.info("Platform Name is - " + this.platformName);
             test.info("Platform Name is - " + this.platformName);
             testPropertiesMap.put("platformName", this.platformName);
+            testPropertiesMap.put("orgAdminEmail", prop.getProperty("orgAdminEmail"));
+            testPropertiesMap.put("orgMemberEmail", prop.getProperty("orgMemberEmail"));
+            testPropertiesMap.put("orgId", prop.getProperty("orgId"));
+            testPropertiesMap.put("orgName", prop.getProperty("orgName"));
+            testPropertiesMap.put("encoreAiApiKey", prop.getProperty("encoreAiApiKey"));
+            testPropertiesMap.put("propellersApiKey", prop.getProperty("propellersApiKey"));
             testPropertiesMap.put("executionMode", runModeMvn == null ? "local" : runModeMvn);
             testPropertiesMap.put("apiEnv", apiEnvMvn == null ? "prod" : apiEnvMvn);
             testPropertiesMap.put("uiEnv", uiEnvMvn == null ? "prod" : uiEnvMvn);
@@ -107,11 +115,11 @@ public class ConfigurationModule extends AbstractModule {
             testPropertiesMap.put("username", prop.getProperty("Username") == null ? "" : prop.getProperty("Username"));
             testPropertiesMap.put("password", prop.getProperty("Password") == null ? "" : prop.getProperty("Password"));
             testPropertiesMap.put("teamId", prop.getProperty("IosTeamId") == null ? "" : prop.getProperty("IosTeamId"));
-            testPropertiesMap.put("reportTitle", prop.getProperty("ReportTitle") == null ? "UI Automation Report" : prop.getProperty("ReportTitle"));
+            testPropertiesMap.put("reportTitle", testReportTitleMvn == null ? "SMC Automation Report" : testReportTitleMvn);
             test.pass(CommonUtil.getStringForReport("<b>Reading Config file from " + configFileLocation + "</b>\n" + new JSONObject(testPropertiesMap).toString(1)));
             testPropertiesMap.putAll(getApiEnvProperties(apiEnvMvn, test));
             // test.info("Reading Configs and Platform specific file");
-            testPropertiesMap.putAll(getPlatformSpecificProperties(this.platformName, test,uiEnvMvn));
+            testPropertiesMap.putAll(getPlatformSpecificProperties(this.platformName, test, uiEnvMvn));
             ExtentManager.setReportTitle(testPropertiesMap.get("reportTitle"));
             extent.setSystemInfo("Execution Mode", runModeMvn);
             extent.setSystemInfo("Automation Platform", platformName);
@@ -141,7 +149,7 @@ public class ConfigurationModule extends AbstractModule {
     }
 
 
-    public Map<String, String> getPlatformSpecificProperties(String platformName, ExtentTest test,String uiEnv) throws Exception {
+    public Map<String, String> getPlatformSpecificProperties(String platformName, ExtentTest test, String uiEnv) throws Exception {
 
         Map<String, String> platformPropertiesMap = new HashMap<String, String>();
         // test.info("Reading Platform Specific Config file .."+platformName);
@@ -151,7 +159,7 @@ public class ConfigurationModule extends AbstractModule {
         InputStream input = null;
         InputStream platformProps = null;
         String browserName = null;
-        String appUrl="";
+        String appUrl = "";
         try {
             switch (platformName.toLowerCase()) {
                 case "android":
@@ -172,7 +180,7 @@ public class ConfigurationModule extends AbstractModule {
                     platformProps = new FileInputStream(CommonUtil.getProjectDir() + fileLocation);
                     // load a properties file
                     prop.load(platformProps);
-                    appUrl=getApplicationUrl(uiEnv,prop);
+                    appUrl = getApplicationUrl(uiEnv, prop);
                     browserName = System.getProperty("browser") == null ? prop.getProperty("BrowserName") : System.getProperty("browser");
                     break;
 
@@ -227,21 +235,39 @@ public class ConfigurationModule extends AbstractModule {
         testcase.info("Setting Up Backend Environment");
         //testcase.info("Api File Location <b>"+apiFileLocation+"</b>");
         logger.info("Setting Up Backend Environment");
-        Properties prop = new Properties();
+        Properties apiProps = new Properties();
         InputStream input = null;
-        InputStream apiProps = null;
+        InputStream inputStream = null;
         String beApiUrl = null;
         try {
 
 
-            apiProps = new FileInputStream(CommonUtil.getProjectDir() + apiFileLocation);
+            inputStream = new FileInputStream(CommonUtil.getProjectDir() + apiFileLocation);
             // load a properties file
-            prop.load(apiProps);
+            apiProps.load(inputStream);
+            switch (apiEnv.substring(0, 2).toLowerCase()) {
+                case "pr":
+                    apiPropertiesMap.put("apiUrl", apiProps.getProperty("prod.host.url"));
 
-            beApiUrl = getApiBaseUrl(apiEnv, prop);
+                    break;
+                case "st":
+                    apiPropertiesMap.put("apiUrl", apiProps.getProperty("stage.host.url"));
 
-            apiPropertiesMap.put("apiUrl", beApiUrl);
-            testcase.info("Api Url is <b>" + beApiUrl + "</b>");
+                    break;
+                case "de":
+                    apiPropertiesMap.put("apiUrl", apiProps.getProperty("dev.host.url"));
+
+                    break;
+                default:
+                    apiPropertiesMap.put("apiUrl", apiProps.getProperty("qa.host.url"));
+
+                    break;
+
+            }
+
+
+            testcase.info("Api Url is <b>" + apiPropertiesMap.get("apiUrl") + "</b>");
+            testcase.info("Cognito Service Url is <b>" + apiPropertiesMap.get("cognitoUrl") + "</b>");
             // while (testPropertiesMap.values().remove(null));
             logger.info("successful Set Up API Env");
         } catch (IOException ex) {
@@ -265,25 +291,6 @@ public class ConfigurationModule extends AbstractModule {
         return apiPropertiesMap;
     }
 
-    public String getApiBaseUrl(String apiEnv, Properties apiProps) {
-        String apiBaseurl = null;
-        switch (apiEnv.substring(0, 2).toLowerCase()) {
-            case "pr":
-                apiBaseurl = apiProps.getProperty("API.PROD.HOST.URL");
-                break;
-            case "st":
-                apiBaseurl = apiProps.getProperty("API.STAGE.HOST.URL");
-                break;
-            case "qa":
-                apiBaseurl = apiProps.getProperty("API.QA.HOST.URL");
-                break;
-            default:
-                apiBaseurl = apiProps.getProperty("API.PROD.HOST.URL");
-        }
-
-        return apiBaseurl;
-    }
-
 
     public String getApplicationUrl(String uiEnv, Properties uiProps) {
         String appurl = null;
@@ -296,6 +303,9 @@ public class ConfigurationModule extends AbstractModule {
                 break;
             case "qa":
                 appurl = uiProps.getProperty("env.qa.url");
+                break;
+            case "dev":
+                appurl = uiProps.getProperty("env.dev.url");
                 break;
             default:
                 appurl = uiProps.getProperty("env.prod.url");

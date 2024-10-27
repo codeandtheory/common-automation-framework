@@ -5,6 +5,7 @@ import com.google.inject.name.Named;
 import com.yml.framework.common.Platform;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
@@ -229,29 +230,40 @@ public class PlatformDriverManager {
      */
     public IOSDriver iOSDriver(String buildPath) throws MalformedURLException {
         File app = new File(buildPath);
+        IOSDriver driver = null;
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getPlatformDeviceName());
-        capabilities.setCapability("platformName", platform.getPlatformName());
-        capabilities.setCapability("udid", platform.getPlatformDeviceId());
-        capabilities.setCapability("automationName", "XCUITest");
-        // capabilities.setCapability("app",platform.getPlatformAppAbsoutePath());
-        capabilities.setCapability("bundleId", appPackage);
-        capabilities.setCapability("orientation", "PORTRAIT");
-        capabilities.setCapability("autoAcceptAlerts", "true");
-        capabilities.setCapability(MobileCapabilityType.NO_RESET, "false");
-        // capabilities.setCapability(MobileCapabilityType.FULL_RESET, "true");
-        capabilities.setCapability("xcodeOrgId", teamId);
-        capabilities.setCapability("xcodeSigningId", "Iphone Tester");
-        // capabilities.setCapability("appium:usePrebuiltWDA",true);
-        //capabilities.setCapability("appium:autoWebView",true);
-        capabilities.setCapability("includeSafariInWebviews", true);  //default is false
-        capabilities.setCapability("webviewConnectTimeout", "90000"); //default is 0
+        if (executionMode.equalsIgnoreCase("cloud")) {
+            logger.info("Execution mode is Browserstack");
+            MutableCapabilities options = new XCUITestOptions();
+            //options.setCapability("browserstack.user","deepaktiwari_2oJwrv");
+            //options.setCapability("browserstack.key","swiqyE2LtRQrzUxbwmX2");
+            //driver = new IOSDriver(new URL("http://localhost:4444/wd/hub"),options);
+            driver = new IOSDriver(new URL("http://hub-cloud.browserstack.com/wd/hub"), options);
+        }
+        else {
+            capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getPlatformDeviceName());
+            capabilities.setCapability("platformName", "iOS");
+            capabilities.setCapability("udid", platform.getPlatformDeviceId());
+            capabilities.setCapability("automationName", "XCUITest");
+            capabilities.setCapability("app",platform.getPlatformAppAbsoutePath());
+            capabilities.setCapability("bundleId", appPackage);
+            capabilities.setCapability("orientation", "PORTRAIT");
+            capabilities.setCapability("autoAcceptAlerts", "true");
+            capabilities.setCapability(MobileCapabilityType.NO_RESET, "false");
+            // capabilities.setCapability(MobileCapabilityType.FULL_RESET, "true");
+            capabilities.setCapability("xcodeOrgId", teamId);
+            capabilities.setCapability("xcodeSigningId", "Iphone Tester");
+            // capabilities.setCapability("appium:usePrebuiltWDA",true);
+            capabilities.setCapability("appium:autoWebView",true);
+            capabilities.setCapability("includeSafariInWebviews", true);  //default is false
+            capabilities.setCapability("webviewConnectTimeout", "90000"); //default is 0
+            logger.info("Desired Capabilities " + new JSONObject(capabilities.asMap()));
+            driver = new IOSDriver(appiumService.getUrl(), capabilities);
+        }
 
-
-        logger.info("Desired Capabilities " + new JSONObject(capabilities.asMap()));
-        IOSDriver driver = new IOSDriver(appiumService.getUrl(), capabilities);
         return driver;
     }
+
 
 
     public WebDriver createDriverForBrowser(String browserName) throws MalformedURLException {
