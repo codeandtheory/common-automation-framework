@@ -1,4 +1,4 @@
-package com.yml.framework.testscripts;
+package com.yml.ios;
 
 
 import com.aventstack.extentreports.ExtentReports;
@@ -6,14 +6,8 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.google.inject.Inject;
-import com.yml.framework.aut.commons.SalonCentricCommons;
 import com.yml.framework.aut.pojo.User;
-import com.yml.framework.aut.screens.*;
-import com.yml.framework.aut.screens.login.ForgotPasswordScreen;
-import com.yml.framework.aut.screens.login.LoginScreen;
-import com.yml.framework.aut.screens.login.SignUpWebViewScreen;
-import com.yml.framework.aut.screens.profile.SettingsScreen;
-import com.yml.framework.aut.screens.profile.UserProfileScreen;
+import com.yml.framework.aut.screens.BaseScreen;
 import com.yml.framework.common.CommonUtil;
 import com.yml.framework.common.Platform;
 import com.yml.framework.common.RequestUtil;
@@ -30,11 +24,15 @@ import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 @Guice(modules = {ConfigurationModule.class})
-public class TS_Loreal_BaseTest {
+public class TS_YML_UI_BaseTest {
 
     @Inject
     @Named("apiUrl")
     public String apiUrl;
+
+    @Inject
+    @com.google.inject.name.Named("executionMode")
+    public String executionMode;
 
     @Inject
     public WebDriver driver;
@@ -54,8 +52,7 @@ public class TS_Loreal_BaseTest {
     @Inject
     public RequestUtil requestUtil;
 
-    @Inject
-    public SalonCentricCommons salonCentricCommons;
+
 
     @Inject
     public ExtentReports extent;
@@ -69,41 +66,11 @@ public class TS_Loreal_BaseTest {
     @Inject
     public MobileDriverActionAdapter mobileDriverAction;
 
-    @Inject
-    public WelcomeScreen welcomeScreen;
-
-    @Inject
-    public LoginScreen loginScreen;
-
-    @Inject
-    public ForgotPasswordScreen forgotPasswordScreen;
-
-    @Inject
-    public ShareLocationScreen shareLocationScreen;
-
-    @Inject
-    public NewHomeScreen newHomeScreen;
-
-    @Inject
-    public HomeScreen homeScreen;
-
-    @Inject
-    public SettingsScreen settingsScreen;
-
-    @Inject
-    public UserProfileScreen userProfileScreen;
-
-    @Inject
-    public EnableFaceIdScreen enableFaceIdScreen;
-
-    @Inject
-    public SignUpWebViewScreen signUpWebViewScreen;
-
 
     public ExtentTest currentTestCase;
 
 
-    @BeforeSuite
+    @BeforeSuite()
     public void setUp() throws Exception {
 
         //add file handler to the logger.
@@ -121,18 +88,18 @@ public class TS_Loreal_BaseTest {
 
     @BeforeClass
     public void setScreens() {
-        currentTestCase = extent.createTest("Before Class");
-        salonCentricCommons.setLoginScreen(loginScreen);
-        salonCentricCommons.setWelcomeScreen(welcomeScreen);
-        salonCentricCommons.setHomeScreen(homeScreen);
-        salonCentricCommons.setShareLocationScreen(shareLocationScreen);
-        salonCentricCommons.setNewHomeScreen(newHomeScreen);
-        salonCentricCommons.setUserProfileScreen(userProfileScreen);
-        salonCentricCommons.setEnableFaceIdScreen(enableFaceIdScreen);
+       currentTestCase = extent.createTest("Before Class");
+//        smcCoreUiCommons.setLoginScreen(loginScreen);
+//        smcCoreUiCommons.setWelcomeScreen(welcomeScreen);
+//        smcCoreUiCommons.setHomeScreen(homeScreen);
+//        smcCoreUiCommons.setShareLocationScreen(shareLocationScreen);
+//        smcCoreUiCommons.setNewHomeScreen(newHomeScreen);
+//        smcCoreUiCommons.setUserProfileScreen(userProfileScreen);
+//        smcCoreUiCommons.setEnableFaceIdScreen(enableFaceIdScreen);
         mobileDriverAction.setTestCase(currentTestCase);
         if (platform.isIOS() || platform.isAndroid())
             mobileDriverAction.reLaunchAppWithClearData();
-        salonCentricCommons.setCurrentTestCase(currentTestCase);
+//        smcCoreUiCommons.setCurrentTestCase(currentTestCase);
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -146,7 +113,7 @@ public class TS_Loreal_BaseTest {
         currentTestCase.assignCategory(method.getDeclaringClass().getSimpleName());
         baseScreen.setCurrentTestCase(currentTestCase);
         mobileDriverAction.setTestCase(currentTestCase);
-        salonCentricCommons.setCurrentTestCase(currentTestCase);
+        // smcCoreUiCommons.setCurrentTestCase(currentTestCase);
         commonUtil.setCurrentTestInstance(currentTestCase);
         baseScreen.setCurrentTestCase(currentTestCase);
     }
@@ -173,6 +140,7 @@ public class TS_Loreal_BaseTest {
                     currentTestCase.skip("TEST SKIPPED ");
                     currentTestCase.skip(result.getThrowable());
                     break;
+
             }
         } catch (Exception e) {
             currentTestCase.fail(e);
@@ -191,9 +159,8 @@ public class TS_Loreal_BaseTest {
             mobileDriverAction.killApp();
         extent.flush();
         driver.quit();
-        if (platform.isIOS() || platform.isAndroid())
+        if ((platform.isIOS() || platform.isAndroid())&&!executionMode.equalsIgnoreCase("cloud"))
             driverHelper.stopAppiumServer();
-
     }
 
 }

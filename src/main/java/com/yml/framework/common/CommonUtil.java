@@ -5,6 +5,7 @@ import com.aventstack.extentreports.ExtentTest;
 import com.google.gson.*;
 import com.google.inject.Inject;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +14,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -247,6 +249,19 @@ public class CommonUtil {
         File finalDestination = new File(destination);
         FileUtils.copyFile(source, finalDestination);
         return destination;
+    }
+
+    public String getImageAsBase64(WebDriver driver, String screenshotName) throws Exception {
+        String dateName = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
+        TakesScreenshot ts = (TakesScreenshot) driver;
+        File source = ts.getScreenshotAs(OutputType.FILE);
+        //after execution, you could see a folder "FailedTestsScreenshots" under src folder
+        String screenShotName = screenshotName + dateName + ".png";
+        String destination = getProjectDir() + "/reports/screenshots/" + screenShotName;
+        File finalDestination = new File(destination);
+        FileUtils.copyFile(source, finalDestination);
+        byte[] imageBytes= IOUtils.toByteArray(new FileInputStream(destination));
+        return Base64.getEncoder().encodeToString(imageBytes);
     }
 
     public JSONArray readFileAsJSONArray(String resourceNameWithPath){

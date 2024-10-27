@@ -1,0 +1,16 @@
+userName: ctqa2
+accessKey: 1Upj3Fh8x5HDf9haEWZ4
+framework: testng
+appiumVersion: 2.4.1
+app: PWC_IOS_AUT
+platforms:
+  - platformName: ios
+    deviceName: iPhone 14 Pro Max
+    platformVersion: 16
+#  - platformName: ios
+#    deviceName: iPhone XS
+#    platformVersion: 15
+parallelsPerPlatform: 1
+browserstackLocal: true
+buildName: browserstack-build-1
+projectName: BrowserStack Sample

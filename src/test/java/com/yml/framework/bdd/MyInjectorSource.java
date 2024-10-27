@@ -18,6 +18,8 @@ public class MyInjectorSource implements InjectorSource {
         String browserName=injector.getInstance(Key.get(String.class, Names.named("browserName")));
         String uiEnv=injector.getInstance(Key.get(String.class, Names.named("uiEnv")));
         String apiEnv=injector.getInstance(Key.get(String.class, Names.named("apiEnv")));
+        String executionMode=injector.getInstance(Key.get(String.class, Names.named("executionMode")));
+        ExtentService.getInstance().setSystemInfo("Execution Mode", executionMode);
         ExtentService.getInstance().setSystemInfo("Platform Name", platform.getPlatformName());
         ExtentService.getInstance().setSystemInfo("Operating System", System.getProperty("os.name"));
         ExtentService.getInstance().setSystemInfo("Browser Name", browserName);

@@ -1,8 +1,9 @@
 .idea
-reports/
+reports/*
+# But keep the 'reports' directory itself
+!reports/
 target/
 *.class
 *.apk
-*.ipa
 src/main/resources/chromedriver/
 automation-log.*
