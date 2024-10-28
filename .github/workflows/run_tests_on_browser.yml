@@ -36,10 +36,31 @@ jobs:
     - uses: browser-actions/setup-chrome@latest
     - run: chrome --version
     - name: test with Maven
-      run: mvn clean test -Dplatform=web -Dbrowser=${{github.event.inputs.web-browser}} -DrunMode=cloud -DsuiteFile=testng.xml
+      run: mvn clean test -Dplatform=web "-DreportTitle=Sample Web Automation Test Report" -Dbrowser=${{github.event.inputs.web-browser}} -DrunMode=cloud -DsuiteFile=testng.xml
+    - name: Check Automation report was generated
+      id: check_files
+      uses: andstor/file-existence-action@v2
+      with:
+        files: "reports/test-suite-report.html"
     - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v3
       with:
-          name: test_execution_results
-          path: reports/
+        name: test_execution_results
+        path: reports/
+
+    - name: send summary report email
+      uses: dawidd6/action-send-mail@v3
+      if: always()
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: 'Web Automation Test Report - ${{ steps.date.outputs.time }}'
+        body: Build job of ${{github.repository}} completed successfully.Below is the Result summary. for Complete Details, Download the attached report.
+        html_body: file://target/surefire-reports/emailable-report.html
+        to: ${{ secrets.EMAIL_RECIPIENT_LIST }}
+        cc: ${{ secrets.EMAIL_CC_LIST }}
+        from: ${{ secrets.EMAIL_USERNAME }}
+        attachments: reports/test-suite-report.html

@@ -182,7 +182,7 @@ public class AndroidDriverActions extends MobileDriverActionAdapter {
                 androidDriver.terminateApp(platform.getPlatformAppPackageName());
             testCase.info("Terminated App and waiting for " + const_timeout_medium + " seconds");
             TimeUnit.SECONDS.sleep(const_timeout_medium);
-            androidDriver.resetApp();
+            androidDriver.terminateApp(appPackage);
             testCase.info("Starting App and waiting for " + const_timeout_medium + " seconds");
             androidDriver.activateApp(platform.getPlatformAppPackageName());
             TimeUnit.SECONDS.sleep(const_timeout_medium);
@@ -235,7 +235,7 @@ public class AndroidDriverActions extends MobileDriverActionAdapter {
     public void launchApp() {
         try {
             testCase.info("Launching App.");
-            androidDriver.resetApp();
+            androidDriver.terminateApp(appPackage);
             androidDriver.activateApp(platform.getPlatformAppPackageName());
             TimeUnit.SECONDS.sleep(const_timeout_medium);
             testCase.pass("App Launched Successfully ");
