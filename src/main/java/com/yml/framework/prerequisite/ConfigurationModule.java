@@ -99,12 +99,6 @@ public class ConfigurationModule extends AbstractModule {
             logger.info("Platform Name is - " + this.platformName);
             test.info("Platform Name is - " + this.platformName);
             testPropertiesMap.put("platformName", this.platformName);
-            testPropertiesMap.put("orgAdminEmail", prop.getProperty("orgAdminEmail"));
-            testPropertiesMap.put("orgMemberEmail", prop.getProperty("orgMemberEmail"));
-            testPropertiesMap.put("orgId", prop.getProperty("orgId"));
-            testPropertiesMap.put("orgName", prop.getProperty("orgName"));
-            testPropertiesMap.put("encoreAiApiKey", prop.getProperty("encoreAiApiKey"));
-            testPropertiesMap.put("propellersApiKey", prop.getProperty("propellersApiKey"));
             testPropertiesMap.put("executionMode", runModeMvn == null ? "local" : runModeMvn);
             testPropertiesMap.put("apiEnv", apiEnvMvn == null ? "prod" : apiEnvMvn);
             testPropertiesMap.put("uiEnv", uiEnvMvn == null ? "prod" : uiEnvMvn);

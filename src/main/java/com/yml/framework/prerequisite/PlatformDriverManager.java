@@ -2,11 +2,11 @@ package com.yml.framework.prerequisite;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.yml.framework.common.CommonUtil;
 import com.yml.framework.common.Platform;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.options.XCUITestOptions;
-import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
@@ -26,10 +26,11 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 import org.testng.annotations.Guice;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -158,6 +159,13 @@ public class PlatformDriverManager {
     public WebDriver createDriver(String platformName) throws Exception {
 
         WebDriver plateformSpecificDriver = null;
+        logger.info(System.getProperty("BROWSERSTACK_AUTOMATION"));
+        logger.info(System.getenv("BROWSERSTACK_AUTOMATION"));
+        if (executionMode.equalsIgnoreCase("local")) {
+            System.setProperty("BROWSERSTACK_AUTOMATION", "false");
+            System.setProperty("USE_BROWSERSTACK_SDK", "false");
+        }
+        logger.info(System.getProperty("BROWSERSTACK_AUTOMATION"));
         if (platformName.equalsIgnoreCase("android")) {
             plateformSpecificDriver = androidDriver(platform.getPlatformAppAbsoutePath());
             logger.info("Android driver created");
@@ -200,8 +208,8 @@ public class PlatformDriverManager {
         capabilities.setCapability("autoGrantPermissions", true);
         // added "MobileCapabilityType.FULL_RESET" capability to start app in fresh state (logout).
         // Remove it if not required
-        capabilities.setCapability(MobileCapabilityType.NO_RESET, noResetFlag);
-        capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
+        capabilities.setCapability("appium:noReset", noResetFlag);
+        capabilities.setCapability("appium:automationName", "UiAutomator2");
         if (executionMode.equalsIgnoreCase("cloud")) {
             sauceOptions.setCapability("username", "oauth-deepak.tiwari-69b6f");
             sauceOptions.setCapability("accessKey", "f1f00935-2049-45f6-b311-e65a533bd16d");
@@ -230,33 +238,48 @@ public class PlatformDriverManager {
      */
     public IOSDriver iOSDriver(String buildPath) throws MalformedURLException {
         File app = new File(buildPath);
+        String fileLocation=null;
+        Properties cloudProps=new Properties();
         IOSDriver driver = null;
         DesiredCapabilities capabilities = new DesiredCapabilities();
         if (executionMode.equalsIgnoreCase("cloud")) {
+            try {
+                fileLocation = "//src//main//resources//ios//cloud-execution.properties";
+                InputStream platformProps = new FileInputStream(CommonUtil.getProjectDir() + fileLocation);
+                // load a properties file
+                cloudProps.load(platformProps);
+            } catch (Exception e) {
+                throw new RuntimeException("IOS Cloud Properties file not Found at "+fileLocation);
+            }
             logger.info("Execution mode is Browserstack");
-            MutableCapabilities options = new XCUITestOptions();
-            //options.setCapability("browserstack.user","deepaktiwari_2oJwrv");
-            //options.setCapability("browserstack.key","swiqyE2LtRQrzUxbwmX2");
-            //driver = new IOSDriver(new URL("http://localhost:4444/wd/hub"),options);
-            driver = new IOSDriver(new URL("http://hub-cloud.browserstack.com/wd/hub"), options);
+            HashMap<String, Object> bstackOptions = new HashMap<String, Object>();
+            bstackOptions.put("userName", cloudProps.getProperty("BS.USERNAME"));
+            bstackOptions.put("accessKey", cloudProps.getProperty("BS.ACCESS_KEY"));
+            bstackOptions.put("appiumVersion", cloudProps.getProperty("BS.APPIUM_VERSION"));
+            capabilities.setCapability("platformName", "ios");
+            capabilities.setCapability("appium:platformVersion", cloudProps.getProperty("BS.PLATFORM_VERSION"));
+            capabilities.setCapability("appium:deviceName", cloudProps.getProperty("BS.DEVICE_NAME"));
+            capabilities.setCapability("appium:app", cloudProps.getProperty("BS.APP"));
+            capabilities.setCapability("bstack:options", bstackOptions);
+            driver = new IOSDriver(new URL("http://hub-cloud.browserstack.com/wd/hub"), capabilities);
         }
         else {
-            capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getPlatformDeviceName());
-            capabilities.setCapability("platformName", "iOS");
-            capabilities.setCapability("udid", platform.getPlatformDeviceId());
-            capabilities.setCapability("automationName", "XCUITest");
-            capabilities.setCapability("app",platform.getPlatformAppAbsoutePath());
-            capabilities.setCapability("bundleId", appPackage);
-            capabilities.setCapability("orientation", "PORTRAIT");
-            capabilities.setCapability("autoAcceptAlerts", "true");
-            capabilities.setCapability(MobileCapabilityType.NO_RESET, "false");
+            capabilities.setCapability("appium:deviceName", platform.getPlatformDeviceName());
+            capabilities.setCapability("appium:platformName", "iOS");
+            capabilities.setCapability("appium:udid", platform.getPlatformDeviceId());
+            capabilities.setCapability("appium:automationName", "XCUITest");
+            capabilities.setCapability("appium:app",platform.getPlatformAppAbsoutePath());
+            capabilities.setCapability("appium:bundleId", appPackage);
+            capabilities.setCapability("appium:orientation", "PORTRAIT");
+            capabilities.setCapability("appium:autoAcceptAlerts", "true");
+            capabilities.setCapability("appium:noReset", "false");
             // capabilities.setCapability(MobileCapabilityType.FULL_RESET, "true");
-            capabilities.setCapability("xcodeOrgId", teamId);
-            capabilities.setCapability("xcodeSigningId", "Iphone Tester");
+            capabilities.setCapability("appium:xcodeOrgId", teamId);
+            capabilities.setCapability("appium:xcodeSigningId", "Iphone Tester");
             // capabilities.setCapability("appium:usePrebuiltWDA",true);
             capabilities.setCapability("appium:autoWebView",true);
-            capabilities.setCapability("includeSafariInWebviews", true);  //default is false
-            capabilities.setCapability("webviewConnectTimeout", "90000"); //default is 0
+            capabilities.setCapability("appium:includeSafariInWebviews", true);  //default is false
+            capabilities.setCapability("appium:webviewConnectTimeout", "90000"); //default is 0
             logger.info("Desired Capabilities " + new JSONObject(capabilities.asMap()));
             driver = new IOSDriver(appiumService.getUrl(), capabilities);
         }
@@ -272,7 +295,9 @@ public class PlatformDriverManager {
         logger.info("Creating Driver for "+browserName);
         switch (browserName.toLowerCase()){
             case "chrome":
-                WebDriverManager.chromedriver().setup();
+                WebDriverManager wdm = WebDriverManager.chromedriver().driverVersion("130");
+                wdm.setup();
+                //WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("start-maximized");
                 if (executionMode.equalsIgnoreCase("cloud")) {
@@ -281,8 +306,9 @@ public class PlatformDriverManager {
                     options.addArguments("--disable-dev-shm-usage");
                     options.addArguments("--headless");
                 }
-                //driver=executionMode.equalsIgnoreCase("cloud")?new ChromeDriver(options):new ChromeDriver();
-                driver=new ChromeDriver(options);
+                driver=executionMode.equalsIgnoreCase("cloud")?new ChromeDriver(options):new ChromeDriver();
+                System.out.println();
+               // driver=new ChromeDriver(options);
                 break;
             case "safari":
                 WebDriverManager.safaridriver().setup();
