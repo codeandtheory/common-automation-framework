@@ -5,6 +5,7 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
+import com.aventstack.extentreports.reporter.configuration.ViewName;
 import com.yml.framework.common.CommonUtil;
 
 
@@ -28,7 +29,10 @@ public class ExtentManager {
     public static ExtentReports createInstance(String fileName) {
         // ExtentHtmlReporter htmlReporter = new ExtentHtmlReporter(fileName);
         htmlReporter = new ExtentSparkReporter(fileName);
-
+        htmlReporter.viewConfigurer()
+                .viewOrder()
+                .as(new ViewName[]{ViewName.DASHBOARD,ViewName.TEST,ViewName.CATEGORY,ViewName.EXCEPTION,ViewName.LOG})
+                .apply();
         htmlReporter.config().setTheme(Theme.STANDARD);
         htmlReporter.config().setEncoding("utf-8");
         setReportTitle(reportTitle);
