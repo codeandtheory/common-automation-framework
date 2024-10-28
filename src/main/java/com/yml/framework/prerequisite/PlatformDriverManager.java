@@ -10,6 +10,7 @@ import io.appium.java_client.ios.options.XCUITestOptions;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import io.cucumber.java.en_scouse.An;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -194,35 +195,59 @@ public class PlatformDriverManager {
         MutableCapabilities sauceOptions = new MutableCapabilities();
         File app = new File(buildPath);
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("deviceName", platform.getPlatformDeviceName());
-        capabilities.setCapability("appium:platformName", platform.getPlatformName());
-        capabilities.setCapability("appPackage", appPackage);
-        capabilities.setCapability("appActivity", appActivity);
-        //capabilities.setCapability("name", methodName.getName());
+        String fileLocation=null;
+        Properties cloudProps=new Properties();
 
-        if (freshInstall)
-            capabilities.setCapability("app", app.getAbsolutePath());
+        if (executionMode.equalsIgnoreCase("cloud")) {
+            try {
+                fileLocation = "//src//main//resources//android//cloud-execution.properties";
+                InputStream platformProps = new FileInputStream(CommonUtil.getProjectDir() + fileLocation);
+                // load a properties file
+                cloudProps.load(platformProps);
+            } catch (Exception e) {
+                throw new RuntimeException("IOS Cloud Properties file not Found at "+fileLocation);
+            }
+            logger.info("Execution mode is Browserstack");
+            HashMap<String, Object> bstackOptions = new HashMap<String, Object>();
+            bstackOptions.put("userName", cloudProps.getProperty("BS.USERNAME"));
+            bstackOptions.put("accessKey", cloudProps.getProperty("BS.ACCESS_KEY"));
+            bstackOptions.put("appiumVersion", cloudProps.getProperty("BS.APPIUM_VERSION"));
+            capabilities.setCapability("platformName", "android");
+            capabilities.setCapability("appium:platformVersion", cloudProps.getProperty("BS.PLATFORM_VERSION"));
+            capabilities.setCapability("appium:deviceName", cloudProps.getProperty("BS.DEVICE_NAME"));
+            capabilities.setCapability("appium:app", cloudProps.getProperty("BS.APP"));
+            capabilities.setCapability("bstack:options", bstackOptions);
+            driver = new AndroidDriver(new URL("http://hub-cloud.browserstack.com/wd/hub"), capabilities);
+        }else {
+            capabilities.setCapability("deviceName", platform.getPlatformDeviceName());
+            capabilities.setCapability("appium:platformName", platform.getPlatformName());
+            capabilities.setCapability("appPackage", appPackage);
+            capabilities.setCapability("appActivity", appActivity);
+            //capabilities.setCapability("name", methodName.getName());
 
-        capabilities.setCapability("chromedriverExecutable", chromeDriverPathMac); //webview handling
-        capabilities.setCapability("chromeOptions", new JSONObject().put("w3c", false));
-        capabilities.setCapability("autoGrantPermissions", true);
-        // added "MobileCapabilityType.FULL_RESET" capability to start app in fresh state (logout).
-        // Remove it if not required
-        capabilities.setCapability("appium:noReset", noResetFlag);
-        capabilities.setCapability("appium:automationName", "UiAutomator2");
-        if (executionMode.equalsIgnoreCase("cloud")) {
-            sauceOptions.setCapability("username", "oauth-deepak.tiwari-69b6f");
-            sauceOptions.setCapability("accessKey", "f1f00935-2049-45f6-b311-e65a533bd16d");
-            sauceOptions.setCapability("build", "appium-build-U12N8");
-            capabilities.setCapability("sauce:options", sauceOptions);
+            if (freshInstall)
+                capabilities.setCapability("app", app.getAbsolutePath());
+
+            capabilities.setCapability("chromedriverExecutable", chromeDriverPathMac); //webview handling
+            capabilities.setCapability("chromeOptions", new JSONObject().put("w3c", false));
+            capabilities.setCapability("autoGrantPermissions", true);
+            // added "MobileCapabilityType.FULL_RESET" capability to start app in fresh state (logout).
+            // Remove it if not required
+            capabilities.setCapability("appium:noReset", noResetFlag);
+            capabilities.setCapability("appium:automationName", "UiAutomator2");
+            if (executionMode.equalsIgnoreCase("cloud")) {
+                sauceOptions.setCapability("username", "oauth-deepak.tiwari-69b6f");
+                sauceOptions.setCapability("accessKey", "f1f00935-2049-45f6-b311-e65a533bd16d");
+                sauceOptions.setCapability("build", "appium-build-U12N8");
+                capabilities.setCapability("sauce:options", sauceOptions);
+            }
+            logger.info("Desired Capabilities " + new JSONObject(capabilities.asMap()));
+            if (executionMode.equalsIgnoreCase("cloud")) {
+                URL saucelabUrl = new URL("https://oauth-deepak.tiwari-69b6f:f1f00935-2049-45f6-b311-e65a533bd16d@ondemand.us-west-1.saucelabs.com:443/wd/hub");
+                driver = new AndroidDriver(saucelabUrl, capabilities);
+            } else
+                driver = new AndroidDriver(appiumService.getUrl(), capabilities);
         }
-        logger.info("Desired Capabilities " + new JSONObject(capabilities.asMap()));
-        if (executionMode.equalsIgnoreCase("cloud")) {
-            URL saucelabUrl = new URL("https://oauth-deepak.tiwari-69b6f:f1f00935-2049-45f6-b311-e65a533bd16d@ondemand.us-west-1.saucelabs.com:443/wd/hub");
-            driver = new AndroidDriver(saucelabUrl, capabilities);
-        }
-        else
-            driver = new AndroidDriver(appiumService.getUrl(), capabilities);
         //Implicit waits
        // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         // AndroidDriver driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub"), capabilities);

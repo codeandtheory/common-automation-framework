@@ -8,6 +8,7 @@ import com.aventstack.extentreports.Status;
 import com.google.inject.Inject;
 import com.yml.framework.aut.pojo.User;
 import com.yml.framework.aut.screens.BaseScreen;
+import com.yml.framework.aut.screens.WelcomeScreen;
 import com.yml.framework.common.CommonUtil;
 import com.yml.framework.common.Platform;
 import com.yml.framework.common.RequestUtil;
@@ -53,7 +54,8 @@ public class TS_YML_UI_BaseTest {
     public RequestUtil requestUtil;
 
 
-
+    @Inject
+    public WelcomeScreen welcomeScreen;
     @Inject
     public ExtentReports extent;
 
