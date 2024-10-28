@@ -22,6 +22,7 @@ public class WelcomeScreen extends BaseScreen {
     @iOSXCUITFindBy(xpath = "//XCUIElementTypeCell[contains(@name,'tutorialCell')]//child::XCUIElementTypeImage")
     public WebElement scLogo;
 
+    @FindBy(id="web-locator")
     @AndroidFindBy(id = "com.saloncentric.app:id/iv_tutorial")
     @iOSXCUITFindBy(xpath = "//XCUIElementTypeCell[contains(@name,'tutorialCell')]//child::XCUIElementTypeImage")
     public WebElement splashScreenImage;
