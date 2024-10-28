@@ -2,6 +2,7 @@ package com.yml.framework.bdd.stepdef;
 
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
 import com.aventstack.extentreports.service.ExtentService;
 import com.google.inject.Inject;
@@ -65,13 +66,13 @@ public class CucumberHooks extends CommonSteps {
                     currentTestCase.pass("SCENARIO PASSED");
                     break;
                 case 2:
-                    String screenshotPath = commonUtil.getScreenShot(driver, scenario.getName().substring(0,2));
-                    currentTestCase.fail("SCENARIO FAILED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
+                    String base64StringFail= commonUtil.getImageAsBase64(driver,scenario.getName().substring(0,2));
+                    currentTestCase.log(Status.FAIL, "TEST FAILED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromBase64String(base64StringFail).build());
                     break;
                 case 3:
                 default:
-                    String screenshotSkip = commonUtil.getScreenShot(driver, scenario.getName().substring(0,2));
-                    currentTestCase.skip("SCENARIO SKIPPED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromPath(screenshotSkip).build());
+                    String base64StringSkip= commonUtil.getImageAsBase64(driver,scenario.getName().substring(0,2));
+                    currentTestCase.log(Status.FAIL, "TEST SKIPPED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromBase64String(base64StringSkip).build());
                     currentTestCase.skip("SCENARIO SKIPPED ");
                     break;
 
