@@ -2,7 +2,6 @@
 <suite name="First Suite" parallel="classes">
     <test name="Chrome Test" parallel="classes">
         <classes>
-            <class name ="runners.bdd.com.ct.framework.RunTest"></class>
         </classes>
     </test>
 </suite>

@@ -33,6 +33,6 @@ public class TS_CT_SampleTest extends TS_CT_UI_BaseTest {
     public void secondTest() throws Exception {
 
         logger.info("Test 2 successfully launched");
-        Assert.assertTrue(true);
+        Assert.assertTrue(false);
     }
 }
