@@ -51,6 +51,7 @@
         <junit.version>4.13.2</junit.version>
         <webdrivermanager.version>5.9.2</webdrivermanager.version>
         <lombok.version>1.18.26</lombok.version>
+        <microsoft.playwright.version>1.49.0</microsoft.playwright.version>
         <rest-assured.version>5.4.0</rest-assured.version>
         <rest-assured-schemavalidator.version>4.3.1</rest-assured-schemavalidator.version>
         <box-jsonpatch.version>1.16</box-jsonpatch.version>
@@ -280,6 +281,11 @@
             <version>1.1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${microsoft.playwright.version}</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.browserstack</groupId>-->
 <!--            <artifactId>browserstack-java-sdk</artifactId>-->
