@@ -331,7 +331,7 @@ public class PlatformDriverManager {
                     options.addArguments("--headless");
                 }
                 driver=executionMode.equalsIgnoreCase("cloud")?new ChromeDriver(options):new ChromeDriver();
-                System.out.println();
+
                // driver=new ChromeDriver(options);
                 break;
             case "safari":

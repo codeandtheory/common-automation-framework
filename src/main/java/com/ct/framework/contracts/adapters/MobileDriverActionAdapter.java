@@ -268,6 +268,52 @@ public abstract class MobileDriverActionAdapter {
         return element.isDisplayed();
     }
 
+    public boolean waitForElementToBeClickable(WebElement element, long timeOutInSeconds, AppUiObjectNames elementNameForLogging) {
+
+        try {
+
+            if (element == null) {
+                return false;
+            }
+            elementNameForLogging = getElementName(elementNameForLogging);
+
+            WebDriverWait wait = new WebDriverWait(this.driver, Duration.ofSeconds(timeOutInSeconds));
+            testCase.info("Waiting  for the element  " + elementNameForLogging + " about " + timeOutInSeconds + " seconds..");
+
+            wait.until(ExpectedConditions.elementToBeClickable(element));
+        } catch (Exception e) {
+            // testCase.error(e);
+            logger.severe("Not Found . ");
+            return false;
+        }
+        testCase.info(elementNameForLogging + " Found ");
+        return element.isDisplayed();
+    }
+
+    public void waitAndClick(WebElement element, long timeOutInSeconds, AppUiObjectNames elementNameForLogging) {
+
+        try {
+
+            if (element == null) {
+                logger.severe("Element is null. So Returning..");
+                testCase.fail("Element is null. So Returning..");
+                return;
+            }
+            elementNameForLogging = getElementName(elementNameForLogging);
+
+            WebDriverWait wait = new WebDriverWait(this.driver, Duration.ofSeconds(timeOutInSeconds));
+            testCase.info("Waiting  for the element  " + elementNameForLogging + " about " + timeOutInSeconds + " seconds..");
+            wait.until(ExpectedConditions.elementToBeClickable(element));
+            element.click();
+        } catch (Exception e) {
+             testCase.fail(e);
+             logger.severe("Element Not Found");testCase.fail("Element Not found.");
+
+
+        }
+    }
+
+
 
     public boolean waitForElementInvisible(WebElement element, long timeOutInSeconds, AppUiObjectNames elementNameForLogging) {
 

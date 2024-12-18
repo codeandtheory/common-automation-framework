@@ -5,8 +5,6 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.ct.framework.aut.pojo.User;
 import com.ct.framework.aut.screens.BaseScreen;
 import com.ct.framework.aut.screens.WelcomeScreen;
@@ -17,6 +15,8 @@ import com.ct.framework.common.RequestUtil;
 import com.ct.framework.contracts.adapters.MobileDriverActionAdapter;
 import com.ct.framework.prerequisite.ConfigurationModule;
 import com.ct.framework.prerequisite.PlatformDriverManager;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
@@ -81,7 +81,7 @@ public class TS_CT_UI_BaseTest {
     @BeforeSuite()
     public void setUp() throws Exception {
 
-       // baseScreen.driver=driver;
+        // baseScreen.driver=driver;
         //add file handler to the logger.
         logger.info("Before Suite..");
         currentTestCase = extent.createTest("Before Suite");
@@ -105,7 +105,7 @@ public class TS_CT_UI_BaseTest {
     @BeforeClass
     public void setScreens() {
 
-       currentTestCase = extent.createTest("Before Class");
+        currentTestCase = extent.createTest("Before Class");
 //        smcCoreUiCommons.setLoginScreen(loginScreen);
 //        smcCoreUiCommons.setWelcomeScreen(welcomeScreen);
 //        smcCoreUiCommons.setHomeScreen(homeScreen);
@@ -145,14 +145,14 @@ public class TS_CT_UI_BaseTest {
                     break;
                 case 2:
                     //String screenshotPath = commonUtil.getScreenShot(driver, result.getName());
-                    String base64StringFail= commonUtil.getImageAsBase64(driver,result.getName());
+                    String base64StringFail = commonUtil.getImageAsBase64(driver, result.getName());
                     currentTestCase.log(Status.FAIL, "TEST FAILED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromBase64String(base64StringFail).build());
                     currentTestCase.fail(CommonUtil.getStringForReport(result.getThrowable().getMessage()));
                     break;
                 case 3:
                 default:
                     //String screenshotSkip = commonUtil.getScreenShot(driver, result.getName());
-                    String base64StringSkip= commonUtil.getImageAsBase64(driver,result.getName());
+                    String base64StringSkip = commonUtil.getImageAsBase64(driver, result.getName());
                     currentTestCase.log(Status.FAIL, "TEST FAILED.REFER SCREENSHOT", MediaEntityBuilder.createScreenCaptureFromBase64String(base64StringSkip).build());
                     currentTestCase.skip("TEST SKIPPED ");
                     currentTestCase.skip(result.getThrowable());
@@ -175,8 +175,9 @@ public class TS_CT_UI_BaseTest {
         if (platform.isIOS() || platform.isAndroid())
             mobileDriverAction.killApp();
         extent.flush();
-        driver.quit();
-        if ((platform.isIOS() || platform.isAndroid())&&!executionMode.equalsIgnoreCase("cloud"))
+        if (driver != null)
+            driver.quit();
+        if ((platform.isIOS() || platform.isAndroid()) && !executionMode.equalsIgnoreCase("cloud"))
             driverHelper.stopAppiumServer();
     }
 

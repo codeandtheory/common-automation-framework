@@ -11,8 +11,4 @@
             <class name="com.ct.framework.testscripts.ios.TS_CT_SampleTest"/>
         </classes>
     </test>
-
-
-
-
 </suite>
