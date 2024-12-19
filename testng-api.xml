@@ -3,12 +3,12 @@
 <suite name="Suite">
 
     <listeners>
-        <listener class-name="com.yml.framework.reporting.ExtentTestNGITestListener" />
+        <listener class-name="com.ct.framework.reporting.ExtentTestNGITestListener" />
     </listeners>
 
     <test name="Common API Test">
         <classes>
-            <class name="com.yml.api.TS_API_UsersTest"/>
+            <class name="com.ct.framework.testscripts.api.TS_API_UsersTest"/>
         </classes>
     </test>
 
