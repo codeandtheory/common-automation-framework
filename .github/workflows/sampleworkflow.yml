@@ -1,0 +1,19 @@
+name: Trigger playwright automation Workflow
+
+on:
+  pull_request:
+    branches:
+      - main # Replace with the branch name to monitor
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Repository A Workflow
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.everest-preview+json" \
+            -H "Authorization: Bearer ${{ secrets.AUTOMATION_REPO_TOKEN }}" \
+            https://api.github.com/repos/codeandtheory/playwright-automation-framework/dispatches \
+            -d '{"event_type": "trigger-workflow"}'
